@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo App</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <h1>Todo App</h1>
+    </header>
+
+    <main class="app-main">
+      <!-- Add Task Form -->
+      <form id="task-form" class="task-form" novalidate>
+        <div class="form-group">
+          <label for="task-title">Add a task</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="task-title"
+              name="title"
+              maxlength="200"
+              placeholder="What needs to be done?"
+              required
+              autocomplete="off"
+            />
+            <button type="submit" id="submit-btn" class="btn btn-primary" disabled>
+              <span class="btn-text">Add</span>
+              <span class="btn-loading" hidden>Adding…</span>
+            </button>
+          </div>
+          <p id="title-error" class="error-message" hidden></p>
+        </div>
+      </form>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <button type="button" id="refresh-btn" class="btn btn-secondary">Refresh</button>
+      </div>
+
+      <!-- Task List -->
+      <section id="task-list" class="task-list" aria-live="polite" aria-label="Tasks">
+        <!-- Tasks rendered here -->
+      </section>
+
+      <!-- Empty State -->
+      <p id="empty-state" class="empty-state" hidden>No tasks yet. Add one above!</p>
+
+      <!-- Error State -->
+      <div id="error-state" class="error-state" hidden>
+        <p id="error-message"></p>
+        <button type="button" id="retry-btn" class="btn btn-primary">Retry</button>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading-state" class="loading-state" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="sr-only">Loading tasks…</span>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <p>Three-tier: Browser → Express API → PostgreSQL</p>
+    </footer>
+
+    <script type="module" src="/js/app.js"></script>
+  </body>
+</html>
