@@ -18,15 +18,23 @@ function createPool() {
     return null;
   }
 
+  // Reuse existing pool instance across warm serverless invocations
+  if (globalThis.__pgPool) {
+    return globalThis.__pgPool;
+  }
+
   const isProduction = process.env.NODE_ENV === 'production';
 
-  return new Pool({
+  const pool = new Pool({
     connectionString,
     max: isProduction ? 10 : 3,
     idleTimeoutMillis: 30_000,
-    connectionTimeoutMillis: 5_000,
+    connectionTimeoutMillis: 8_000,
     ssl: connectionString.includes('sslmode=require') ? { rejectUnauthorized: false } : false,
   });
+
+  globalThis.__pgPool = pool;
+  return pool;
 }
 
 // Create pool and repository at module level (runs on cold start)

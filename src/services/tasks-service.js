@@ -217,9 +217,9 @@ function validateCreateBody(body) {
     completed: Boolean(body?.completed),
     priority: validatePriority(body?.priority),
     category: validateCategory(body?.category),
-    dueAt: validateDueAt(body?.dueAt),
-    reminderAt: validateReminderAt(body?.reminderAt),
-    estimatedMinutes: validateEstimatedMinutes(body?.estimatedMinutes),
+    dueAt: validateDueAt(body?.dueAt ?? body?.due_at),
+    reminderAt: validateReminderAt(body?.reminderAt ?? body?.reminder_at),
+    estimatedMinutes: validateEstimatedMinutes(body?.estimatedMinutes ?? body?.estimated_minutes),
     subtasks: validateSubtasks(body?.subtasks),
     pinned: validatePinned(body?.pinned),
   };
@@ -252,23 +252,28 @@ function validateUpdateBody(body) {
   if ('category' in body) {
     fields.category = validateCategory(body.category);
   }
-  if ('dueAt' in body) {
-    fields.dueAt = validateDueAt(body.dueAt);
+  if ('dueAt' in body || 'due_at' in body) {
+    fields.dueAt = validateDueAt(body.dueAt ?? body.due_at);
   }
-  if ('reminderAt' in body) {
-    fields.reminderAt = validateReminderAt(body.reminderAt);
+  if ('reminderAt' in body || 'reminder_at' in body) {
+    fields.reminderAt = validateReminderAt(body.reminderAt ?? body.reminder_at);
   }
-  if ('reminderSent' in body) {
-    if (typeof body.reminderSent !== 'boolean') {
+  if ('reminderSent' in body || 'reminder_sent' in body) {
+    const val = body.reminderSent ?? body.reminder_sent;
+    if (typeof val !== 'boolean') {
       throw new ValidationError('Reminder sent must be a boolean', 'reminderSent');
     }
-    fields.reminderSent = body.reminderSent;
+    fields.reminderSent = val;
   }
-  if ('estimatedMinutes' in body) {
-    fields.estimatedMinutes = validateEstimatedMinutes(body.estimatedMinutes);
+  if ('estimatedMinutes' in body || 'estimated_minutes' in body) {
+    fields.estimatedMinutes = validateEstimatedMinutes(
+      body.estimatedMinutes ?? body.estimated_minutes
+    );
   }
-  if ('actualSecondsSpent' in body) {
-    fields.actualSecondsSpent = validateActualSecondsSpent(body.actualSecondsSpent);
+  if ('actualSecondsSpent' in body || 'actual_seconds_spent' in body) {
+    fields.actualSecondsSpent = validateActualSecondsSpent(
+      body.actualSecondsSpent ?? body.actual_seconds_spent
+    );
   }
   if ('subtasks' in body) {
     fields.subtasks = validateSubtasks(body.subtasks);

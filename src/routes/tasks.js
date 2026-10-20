@@ -12,8 +12,8 @@ import { ValidationError, NotFoundError, InvalidIdError } from '../services/task
 export function createTasksRouter(tasksService) {
   const router = Router();
 
-  // GET /api/todos
-  router.get('/todos', async (req, res, next) => {
+  // GET /api/todos & /api/tasks
+  router.get(['/todos', '/tasks'], async (req, res, next) => {
     try {
       const tasks = await tasksService.getAllTasks(req.query);
       res.json({ tasks });
@@ -22,8 +22,8 @@ export function createTasksRouter(tasksService) {
     }
   });
 
-  // POST /api/todos
-  router.post('/todos', async (req, res, next) => {
+  // POST /api/todos & /api/tasks
+  router.post(['/todos', '/tasks'], async (req, res, next) => {
     try {
       const task = await tasksService.createTask(req.body);
       res.status(201).json({ task });
@@ -37,8 +37,8 @@ export function createTasksRouter(tasksService) {
     }
   });
 
-  // GET /api/todos/:id
-  router.get('/todos/:id', async (req, res, next) => {
+  // GET /api/todos/:id & /api/tasks/:id
+  router.get(['/todos/:id', '/tasks/:id'], async (req, res, next) => {
     try {
       const task = await tasksService.getTaskById(req.params.id);
       res.json({ task });
@@ -53,8 +53,8 @@ export function createTasksRouter(tasksService) {
     }
   });
 
-  // PUT /api/todos/:id (full replacement)
-  router.put('/todos/:id', async (req, res, next) => {
+  // PUT /api/todos/:id & /api/tasks/:id (full replacement)
+  router.put(['/todos/:id', '/tasks/:id'], async (req, res, next) => {
     try {
       const task = await tasksService.replaceTask(req.params.id, req.body);
       res.json({ task });
@@ -74,8 +74,8 @@ export function createTasksRouter(tasksService) {
     }
   });
 
-  // PATCH /api/todos/:id (partial update)
-  router.patch('/todos/:id', async (req, res, next) => {
+  // PATCH /api/todos/:id & /api/tasks/:id (partial update)
+  router.patch(['/todos/:id', '/tasks/:id'], async (req, res, next) => {
     try {
       const task = await tasksService.updateTask(req.params.id, req.body);
       res.json({ task });
@@ -95,8 +95,8 @@ export function createTasksRouter(tasksService) {
     }
   });
 
-  // DELETE /api/todos/:id
-  router.delete('/todos/:id', async (req, res, next) => {
+  // DELETE /api/todos/:id & /api/tasks/:id
+  router.delete(['/todos/:id', '/tasks/:id'], async (req, res, next) => {
     try {
       const deletedTask = await tasksService.deleteTask(req.params.id);
       res.json({ deleted: true, id: deletedTask.id, item: deletedTask });
@@ -111,8 +111,8 @@ export function createTasksRouter(tasksService) {
     }
   });
 
-  // POST /api/todos/clear-completed
-  router.post('/todos/clear-completed', async (req, res, next) => {
+  // POST /api/todos/clear-completed & /api/tasks/clear-completed
+  router.post(['/todos/clear-completed', '/tasks/clear-completed'], async (req, res, next) => {
     try {
       const result = await tasksService.clearCompleted();
       res.json(result);
