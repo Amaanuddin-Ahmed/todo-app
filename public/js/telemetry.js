@@ -21,7 +21,6 @@ class TelemetryInspector {
 
   bindDom() {
     const dockBar = document.getElementById('telemetry-dock-bar');
-    const drawer = document.getElementById('telemetry-drawer');
     const closeBtn = document.getElementById('telemetry-drawer-close');
     const pingBtn = document.getElementById('ping-stack-btn');
 
@@ -171,10 +170,7 @@ class TelemetryInspector {
 
 function escapeHtml(str) {
   if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 export const telemetryInspector = new TelemetryInspector();

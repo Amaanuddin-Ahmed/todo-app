@@ -91,7 +91,11 @@
     </header>
 
     <!-- Floating Reminder Banners Container -->
-    <div id="reminder-banner-container" class="reminder-banner-container" aria-live="assertive"></div>
+    <div
+      id="reminder-banner-container"
+      class="reminder-banner-container"
+      aria-live="assertive"
+    ></div>
 
     <!-- Main Workspace -->
     <main class="app-main">
@@ -130,7 +134,12 @@
           <div class="kpi-value" id="kpi-cognitive-time">0m</div>
           <div class="kpi-subtext">
             <span>Budget: 180m</span>
-            <button type="button" class="btn btn-sm btn-secondary" id="auto-pick-frog-btn" title="Pick top 3 high-impact tasks">
+            <button
+              type="button"
+              class="btn btn-sm btn-secondary"
+              id="auto-pick-frog-btn"
+              title="Pick top 3 high-impact tasks"
+            >
               ✨ Pick Top 3
             </button>
           </div>
@@ -230,10 +239,16 @@
                   <label for="composer-due">Due Date & Reminder</label>
                   <input type="datetime-local" id="composer-due" class="composer-input" />
                   <div class="quick-presets-row">
-                    <button type="button" class="preset-chip" data-preset="in5m">In 5m (Demo)</button>
+                    <button type="button" class="preset-chip" data-preset="in5m">
+                      In 5m (Demo)
+                    </button>
                     <button type="button" class="preset-chip" data-preset="in30m">In 30m</button>
-                    <button type="button" class="preset-chip" data-preset="tonight">Tonight 8pm</button>
-                    <button type="button" class="preset-chip" data-preset="tomorrow">Tomorrow 9am</button>
+                    <button type="button" class="preset-chip" data-preset="tonight">
+                      Tonight 8pm
+                    </button>
+                    <button type="button" class="preset-chip" data-preset="tomorrow">
+                      Tomorrow 9am
+                    </button>
                   </div>
                 </div>
               </div>
@@ -276,7 +291,12 @@
               <button type="button" class="filter-tab" data-status="today">
                 Today & Soon <span class="filter-badge" id="badge-count-today">0</span>
               </button>
-              <button type="button" class="filter-tab" data-status="overdue" id="tab-filter-overdue">
+              <button
+                type="button"
+                class="filter-tab"
+                data-status="overdue"
+                id="tab-filter-overdue"
+              >
                 Overdue <span class="filter-badge" id="badge-count-overdue">0</span>
               </button>
               <button type="button" class="filter-tab" data-status="completed">
@@ -287,7 +307,9 @@
 
           <div class="category-and-sort-row">
             <div class="category-pills" id="category-pills">
-              <button type="button" class="category-pill active" data-cat="all">All Categories</button>
+              <button type="button" class="category-pill active" data-cat="all">
+                All Categories
+              </button>
             </div>
 
             <div class="bulk-actions-group">
@@ -299,11 +321,21 @@
                 <option value="timeSpent">Sort: Time Spent</option>
               </select>
 
-              <button type="button" id="clear-completed-btn" class="btn btn-secondary btn-sm" title="Clear all completed tasks">
+              <button
+                type="button"
+                id="clear-completed-btn"
+                class="btn btn-secondary btn-sm"
+                title="Clear all completed tasks"
+              >
                 Clear Completed
               </button>
 
-              <button type="button" id="export-btn" class="btn btn-secondary btn-sm" title="Export tasks report">
+              <button
+                type="button"
+                id="export-btn"
+                class="btn btn-secondary btn-sm"
+                title="Export tasks report"
+              >
                 Export ▾
               </button>
             </div>
@@ -326,7 +358,9 @@
         <div id="empty-state" class="empty-state-card" hidden>
           <div class="empty-state-icon">📋</div>
           <h3>No tasks found</h3>
-          <p id="empty-state-desc">Your task list is empty. Add a task above or load sample academic tasks.</p>
+          <p id="empty-state-desc">
+            Your task list is empty. Add a task above or load sample academic tasks.
+          </p>
           <button type="button" id="seed-demo-tasks-btn" class="btn btn-primary">
             ✨ Seed Sample Tasks
           </button>
@@ -336,9 +370,7 @@
         <div id="error-state" class="empty-state-card" hidden>
           <div class="empty-state-icon">⚠️</div>
           <h3 id="error-message">Unable to load tasks from PostgreSQL</h3>
-          <button type="button" id="retry-btn" class="btn btn-primary">
-            Retry Connection
-          </button>
+          <button type="button" id="retry-btn" class="btn btn-primary">Retry Connection</button>
         </div>
       </div>
 
@@ -387,7 +419,9 @@
       <div id="view-focus" class="view-panel" hidden>
         <div class="focus-studio-card" id="focus-studio-widget">
           <div class="focus-modes-row">
-            <button type="button" class="focus-mode-btn active" data-mins="25">Pomodoro (25m)</button>
+            <button type="button" class="focus-mode-btn active" data-mins="25">
+              Pomodoro (25m)
+            </button>
             <button type="button" class="focus-mode-btn" data-mins="15">Sprint (15m)</button>
             <button type="button" class="focus-mode-btn" data-mins="50">Deep Work (50m)</button>
           </div>
@@ -400,7 +434,13 @@
           <div class="timer-circle-wrapper">
             <svg class="timer-svg" viewBox="0 0 120 120">
               <circle class="timer-bg-ring" cx="60" cy="60" r="54"></circle>
-              <circle class="timer-progress-ring" id="focus-progress-ring" cx="60" cy="60" r="54"></circle>
+              <circle
+                class="timer-progress-ring"
+                id="focus-progress-ring"
+                cx="60"
+                cy="60"
+                r="54"
+              ></circle>
             </svg>
             <div class="timer-display">
               <span class="timer-time" id="focus-timer-text">25:00</span>
@@ -409,15 +449,11 @@
           </div>
 
           <div class="focus-controls-row">
-            <button type="button" id="focus-play-btn" class="btn btn-primary">
-              ▶ Start Focus
-            </button>
+            <button type="button" id="focus-play-btn" class="btn btn-primary">▶ Start Focus</button>
             <button type="button" id="focus-pause-btn" class="btn btn-secondary" hidden>
               ⏸ Pause
             </button>
-            <button type="button" id="focus-reset-btn" class="btn btn-secondary">
-              ↺ Reset
-            </button>
+            <button type="button" id="focus-reset-btn" class="btn btn-secondary">↺ Reset</button>
             <button type="button" id="focus-complete-btn" class="btn btn-accent">
               ✓ Mark Task Done
             </button>
@@ -429,28 +465,47 @@
     <!-- Undo Toast Notification -->
     <div id="undo-toast" class="undo-toast" hidden role="status" aria-live="polite">
       <span id="undo-toast-text">Task deleted</span>
-      <button type="button" id="undo-action-btn" class="btn btn-sm btn-primary">
-        Undo
-      </button>
+      <button type="button" id="undo-action-btn" class="btn btn-sm btn-primary">Undo</button>
       <button type="button" id="undo-dismiss-btn" class="btn btn-icon" aria-label="Dismiss">
         ✕
       </button>
     </div>
 
     <!-- Keyboard Shortcuts Modal -->
-    <dialog id="shortcuts-modal" class="composer-card" style="max-width: 440px; margin: auto;">
-      <div class="drawer-header" style="margin-bottom: 1rem;">
+    <dialog id="shortcuts-modal" class="composer-card" style="max-width: 440px; margin: auto">
+      <div class="drawer-header" style="margin-bottom: 1rem">
         <h3>Keyboard Shortcuts</h3>
         <button type="button" id="shortcuts-close-btn" class="btn btn-icon">✕</button>
       </div>
       <table class="log-table">
         <tbody>
-          <tr><td><kbd class="kbd-badge">N</kbd> or <kbd class="kbd-badge">C</kbd></td><td>Focus Add Task input</td></tr>
-          <tr><td><kbd class="kbd-badge">/</kbd> or <kbd class="kbd-badge">⌘K</kbd></td><td>Focus Search & Filters</td></tr>
-          <tr><td><kbd class="kbd-badge">1</kbd>, <kbd class="kbd-badge">2</kbd>, <kbd class="kbd-badge">3</kbd></td><td>Switch Views (List, Matrix, Focus)</td></tr>
-          <tr><td><kbd class="kbd-badge">I</kbd></td><td>Toggle Architecture & Telemetry Inspector</td></tr>
-          <tr><td><kbd class="kbd-badge">T</kbd></td><td>Toggle Dark / Light Theme</td></tr>
-          <tr><td><kbd class="kbd-badge">Esc</kbd></td><td>Close drawers & modals</td></tr>
+          <tr>
+            <td><kbd class="kbd-badge">N</kbd> or <kbd class="kbd-badge">C</kbd></td>
+            <td>Focus Add Task input</td>
+          </tr>
+          <tr>
+            <td><kbd class="kbd-badge">/</kbd> or <kbd class="kbd-badge">⌘K</kbd></td>
+            <td>Focus Search & Filters</td>
+          </tr>
+          <tr>
+            <td>
+              <kbd class="kbd-badge">1</kbd>, <kbd class="kbd-badge">2</kbd>,
+              <kbd class="kbd-badge">3</kbd>
+            </td>
+            <td>Switch Views (List, Matrix, Focus)</td>
+          </tr>
+          <tr>
+            <td><kbd class="kbd-badge">I</kbd></td>
+            <td>Toggle Architecture & Telemetry Inspector</td>
+          </tr>
+          <tr>
+            <td><kbd class="kbd-badge">T</kbd></td>
+            <td>Toggle Dark / Light Theme</td>
+          </tr>
+          <tr>
+            <td><kbd class="kbd-badge">Esc</kbd></td>
+            <td>Close drawers & modals</td>
+          </tr>
         </tbody>
       </table>
     </dialog>
@@ -469,8 +524,16 @@
 
         <div class="dock-badges">
           <span>Latency: <strong id="telemetry-dock-latency">18ms</strong></span>
-          <span>DB: <strong id="telemetry-dock-db" class="status-badge status-ok">Connected</strong></span>
-          <button type="button" id="ping-stack-btn" class="btn btn-sm btn-secondary" title="Ping stack & measure round-trip latency">
+          <span
+            >DB:
+            <strong id="telemetry-dock-db" class="status-badge status-ok">Connected</strong></span
+          >
+          <button
+            type="button"
+            id="ping-stack-btn"
+            class="btn btn-sm btn-secondary"
+            title="Ping stack & measure round-trip latency"
+          >
             ⚡ Ping Stack
           </button>
           <span>[ <span id="telemetry-toggle-icon">▲</span> Live Console ]</span>
@@ -482,7 +545,14 @@
         <div class="drawer-header">
           <h3>Live Three-Tier Telemetry & Parameterized SQL Inspector</h3>
           <div id="telemetry-health-stats" class="dock-badges"></div>
-          <button type="button" id="telemetry-drawer-close" class="btn btn-icon" aria-label="Close drawer">✕</button>
+          <button
+            type="button"
+            id="telemetry-drawer-close"
+            class="btn btn-icon"
+            aria-label="Close drawer"
+          >
+            ✕
+          </button>
         </div>
 
         <div class="drawer-grid">
@@ -510,8 +580,11 @@
           <!-- Parameterized SQL Query Inspector -->
           <div class="drawer-panel">
             <h4>Latest Parameterized PostgreSQL Query (Express ⇄ Database)</h4>
-            <pre class="sql-code-block" id="telemetry-sql-code">SELECT NOW() AS server_time, current_database() AS db_name FROM tasks;</pre>
-            <p class="reminder-banner-meta">All operations parameterized ($1, $2) to guarantee SQL injection safety.</p>
+            <pre class="sql-code-block" id="telemetry-sql-code">
+SELECT NOW() AS server_time, current_database() AS db_name FROM tasks;</pre>
+            <p class="reminder-banner-meta">
+              All operations parameterized ($1, $2) to guarantee SQL injection safety.
+            </p>
           </div>
         </div>
       </div>

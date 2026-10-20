@@ -21,10 +21,11 @@
 
 /* 2. Theme Custom Properties */
 :root,
-[data-theme="dark"] {
+[data-theme='dark'] {
   --bg-canvas: #090a0f;
-  --bg-ambient-glow: radial-gradient(circle at 50% -10%, rgba(99, 102, 241, 0.16), transparent 60%),
-                     radial-gradient(circle at 85% 20%, rgba(14, 165, 233, 0.08), transparent 45%);
+  --bg-ambient-glow:
+    radial-gradient(circle at 50% -10%, rgba(99, 102, 241, 0.16), transparent 60%),
+    radial-gradient(circle at 85% 20%, rgba(14, 165, 233, 0.08), transparent 45%);
   --bg-surface: rgba(18, 21, 33, 0.82);
   --bg-surface-elevated: rgba(26, 30, 46, 0.92);
   --bg-surface-hover: rgba(34, 39, 59, 0.95);
@@ -60,9 +61,9 @@
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-[data-theme="light"] {
+[data-theme='light'] {
   --bg-canvas: #f8fafc;
-  --bg-ambient-glow: radial-gradient(circle at 50% -10%, rgba(99, 102, 241, 0.10), transparent 60%);
+  --bg-ambient-glow: radial-gradient(circle at 50% -10%, rgba(99, 102, 241, 0.1), transparent 60%);
   --bg-surface: #ffffff;
   --bg-surface-elevated: #f1f5f9;
   --bg-surface-hover: #e2e8f0;
@@ -99,7 +100,9 @@ body {
   display: flex;
   flex-direction: column;
   padding-bottom: 72px; /* clearance for architecture dock */
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 /* Focus outlines */
@@ -237,9 +240,15 @@ body {
   color: var(--text-primary);
 }
 
-.dot-green { color: var(--status-success); }
-.dot-red { color: var(--status-danger); }
-.dot-amber { color: var(--status-warning); }
+.dot-green {
+  color: var(--status-success);
+}
+.dot-red {
+  color: var(--status-danger);
+}
+.dot-amber {
+  color: var(--status-warning);
+}
 
 /* Buttons */
 .btn {
@@ -349,7 +358,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .kpi-card:hover {
@@ -406,9 +417,18 @@ body {
   font-size: 0.6875rem;
   font-weight: 600;
 }
-.load-optimal { background: rgba(16, 185, 129, 0.15); color: var(--status-success); }
-.load-heavy { background: rgba(245, 158, 11, 0.15); color: var(--status-warning); }
-.load-overloaded { background: rgba(239, 68, 68, 0.15); color: var(--status-danger); }
+.load-optimal {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--status-success);
+}
+.load-heavy {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--status-warning);
+}
+.load-overloaded {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--status-danger);
+}
 
 /* 7. Smart Task Composer */
 .composer-card {
@@ -419,12 +439,16 @@ body {
   border-radius: var(--radius-lg);
   padding: 1.1rem;
   box-shadow: var(--shadow-card);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .composer-card:focus-within {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 1px var(--border-focus), 0 12px 30px -10px var(--accent-glow);
+  box-shadow:
+    0 0 0 1px var(--border-focus),
+    0 12px 30px -10px var(--accent-glow);
 }
 
 .quick-add-row {
@@ -499,14 +523,42 @@ body {
   border-radius: 9999px;
 }
 
-.token-priority-urgent { background: rgba(244, 63, 94, 0.15); color: var(--priority-urgent); border: 1px solid rgba(244, 63, 94, 0.3); }
-.token-priority-high { background: rgba(245, 158, 11, 0.15); color: var(--priority-high); border: 1px solid rgba(245, 158, 11, 0.3); }
-.token-priority-medium { background: rgba(59, 130, 246, 0.15); color: var(--priority-medium); border: 1px solid rgba(59, 130, 246, 0.3); }
-.token-priority-low { background: rgba(16, 185, 129, 0.15); color: var(--priority-low); border: 1px solid rgba(16, 185, 129, 0.3); }
+.token-priority-urgent {
+  background: rgba(244, 63, 94, 0.15);
+  color: var(--priority-urgent);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+.token-priority-high {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--priority-high);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.token-priority-medium {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--priority-medium);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+.token-priority-low {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--priority-low);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
 
-.token-category { background: rgba(99, 102, 241, 0.15); color: var(--accent-primary); border: 1px solid rgba(99, 102, 241, 0.3); }
-.token-effort { background: rgba(14, 165, 233, 0.15); color: #0ea5e9; border: 1px solid rgba(14, 165, 233, 0.3); }
-.token-datetime { background: rgba(168, 85, 247, 0.15); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3); }
+.token-category {
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--accent-primary);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+.token-effort {
+  background: rgba(14, 165, 233, 0.15);
+  color: #0ea5e9;
+  border: 1px solid rgba(14, 165, 233, 0.3);
+}
+.token-datetime {
+  background: rgba(168, 85, 247, 0.15);
+  color: #a855f7;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
 
 /* Expandable Advanced Composer Controls */
 .composer-drawer {
@@ -729,14 +781,19 @@ body {
 .skeleton-card::after {
   content: '';
   position: absolute;
-  top: 0; right: 0; bottom: 0; left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   transform: translateX(-100%);
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
   animation: shimmer 1.5s infinite;
 }
 
 @keyframes shimmer {
-  100% { transform: translateX(100%); }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* 10. Rich Interactive Task Cards */
@@ -759,7 +816,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .task-card:hover {
@@ -767,10 +827,18 @@ body {
   border-color: var(--border-strong);
 }
 
-.task-card.priority-urgent { border-left-color: var(--priority-urgent); }
-.task-card.priority-high { border-left-color: var(--priority-high); }
-.task-card.priority-medium { border-left-color: var(--priority-medium); }
-.task-card.priority-low { border-left-color: var(--priority-low); }
+.task-card.priority-urgent {
+  border-left-color: var(--priority-urgent);
+}
+.task-card.priority-high {
+  border-left-color: var(--priority-high);
+}
+.task-card.priority-medium {
+  border-left-color: var(--priority-medium);
+}
+.task-card.priority-low {
+  border-left-color: var(--priority-low);
+}
 
 .task-card.is-pinned {
   background: linear-gradient(to right, rgba(99, 102, 241, 0.04), var(--bg-surface));
@@ -879,10 +947,26 @@ body {
   color: var(--text-secondary);
 }
 
-.chip-urgent { background: rgba(244, 63, 94, 0.15); color: var(--priority-urgent); border-color: rgba(244, 63, 94, 0.3); }
-.chip-high { background: rgba(245, 158, 11, 0.15); color: var(--priority-high); border-color: rgba(245, 158, 11, 0.3); }
-.chip-medium { background: rgba(59, 130, 246, 0.15); color: var(--priority-medium); border-color: rgba(59, 130, 246, 0.3); }
-.chip-low { background: rgba(16, 185, 129, 0.15); color: var(--priority-low); border-color: rgba(16, 185, 129, 0.3); }
+.chip-urgent {
+  background: rgba(244, 63, 94, 0.15);
+  color: var(--priority-urgent);
+  border-color: rgba(244, 63, 94, 0.3);
+}
+.chip-high {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--priority-high);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+.chip-medium {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--priority-medium);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+.chip-low {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--priority-low);
+  border-color: rgba(16, 185, 129, 0.3);
+}
 
 .chip-overdue {
   background: rgba(244, 63, 94, 0.2);
@@ -898,8 +982,13 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.65; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.65;
+  }
 }
 
 .task-actions {
@@ -1010,10 +1099,18 @@ body {
   gap: 0.4rem;
 }
 
-.quadrant-q1 { border-top: 3px solid var(--priority-urgent); }
-.quadrant-q2 { border-top: 3px solid #0ea5e9; }
-.quadrant-q3 { border-top: 3px solid var(--priority-high); }
-.quadrant-q4 { border-top: 3px solid var(--priority-low); }
+.quadrant-q1 {
+  border-top: 3px solid var(--priority-urgent);
+}
+.quadrant-q2 {
+  border-top: 3px solid #0ea5e9;
+}
+.quadrant-q3 {
+  border-top: 3px solid var(--priority-high);
+}
+.quadrant-q4 {
+  border-top: 3px solid var(--priority-low);
+}
 
 .quadrant-tasks-list {
   display: flex;
@@ -1148,7 +1245,9 @@ body {
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
   padding: 0.85rem 1rem;
-  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--accent-glow);
+  box-shadow:
+    0 15px 35px -5px rgba(0, 0, 0, 0.6),
+    0 0 0 1px var(--accent-glow);
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
@@ -1156,8 +1255,14 @@ body {
 }
 
 @keyframes slideInBanner {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .reminder-banner-content {
@@ -1217,8 +1322,14 @@ body {
 }
 
 @keyframes slideUpToast {
-  from { transform: translateY(30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* 15. Live Three-Tier Architecture Inspector Dock */
@@ -1280,8 +1391,14 @@ body {
   border-radius: 4px;
   font-size: 0.6875rem;
 }
-.status-ok { background: rgba(16, 185, 129, 0.15); color: var(--status-success); }
-.status-err { background: rgba(239, 68, 68, 0.15); color: var(--status-danger); }
+.status-ok {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--status-success);
+}
+.status-err {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--status-danger);
+}
 
 /* Slide-Up Drawer Console */
 .telemetry-drawer {
@@ -1366,12 +1483,26 @@ body {
   padding: 0.1rem 0.35rem;
   border-radius: 4px;
 }
-.method-get { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-.method-post { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-.method-patch { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-.method-delete { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+.method-get {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+.method-post {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+.method-patch {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+.method-delete {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
 
-.status-2xx { color: var(--status-success); }
+.status-2xx {
+  color: var(--status-success);
+}
 
 /* Traveling Packet Animation */
 .packet-indicator {
@@ -1388,9 +1519,18 @@ body {
 }
 
 @keyframes packetHop {
-  0% { transform: scale(1); background: var(--accent-primary); }
-  50% { transform: scale(2) translateY(-4px); background: #0ea5e9; }
-  100% { transform: scale(1); background: var(--status-success); }
+  0% {
+    transform: scale(1);
+    background: var(--accent-primary);
+  }
+  50% {
+    transform: scale(2) translateY(-4px);
+    background: #0ea5e9;
+  }
+  100% {
+    transform: scale(1);
+    background: var(--status-success);
+  }
 }
 
 /* 16. Empty State */

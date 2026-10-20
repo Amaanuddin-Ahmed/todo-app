@@ -1,7 +1,7 @@
 // TaskFlow Studio - Main Application Controller
 // Modular, XSS-safe, Three-Tier Architecture (Browser -> Express API -> PostgreSQL)
 
-import { apiGet, apiPost, apiPatch, apiPut, apiDelete, ApiError } from './api.js';
+import { apiGet, apiPost, apiPatch, apiDelete } from './api.js';
 import { parseNaturalLanguageTask } from './parser.js';
 import { reminderEngine } from './reminders.js';
 import { telemetryInspector } from './telemetry.js';
@@ -24,7 +24,6 @@ let undoTimeoutId = null;
 const taskForm = document.getElementById('task-form');
 const titleInput = document.getElementById('task-title');
 const submitBtn = document.getElementById('submit-btn');
-const titleError = document.getElementById('title-error');
 const tokenPreviewStrip = document.getElementById('token-preview-strip');
 const smartParseChip = document.getElementById('smart-parse-chip');
 const composerExpandToggle = document.getElementById('composer-expand-toggle');
@@ -135,7 +134,8 @@ async function loadTasks({ isInitial = false } = {}) {
     if (tasks.length === 0) {
       if (errorState) {
         errorState.hidden = false;
-        if (errorMessage) errorMessage.textContent = err.message || 'Failed to connect to PostgreSQL';
+        if (errorMessage)
+          errorMessage.textContent = err.message || 'Failed to connect to PostgreSQL';
       }
       if (taskList) taskList.hidden = true;
       if (emptyState) emptyState.hidden = true;
@@ -153,7 +153,9 @@ function renderAll() {
   renderKpiStrip();
   renderCategoryPills();
   renderTaskList();
-  renderEisenhowerMatrix();
+  if (currentView === 'eisenhower') {
+    renderEisenhowerMatrix();
+  }
 }
 
 // 1. KPI Summary Strip
@@ -205,7 +207,10 @@ function renderKpiStrip() {
 
   // Cognitive load (budget: 180m default)
   const activeTodayTasks = tasks.filter(t => !t.completed);
-  const totalEstimatedMins = activeTodayTasks.reduce((sum, t) => sum + (t.estimatedMinutes || 25), 0);
+  const totalEstimatedMins = activeTodayTasks.reduce(
+    (sum, t) => sum + (t.estimatedMinutes || 25),
+    0
+  );
   const cognitiveTimeEl = document.getElementById('kpi-cognitive-time');
   const loadBadge = document.getElementById('cognitive-load-badge');
 
@@ -303,7 +308,9 @@ function getFilteredTasks() {
 
   // Category Filter
   if (currentCategoryFilter !== 'all') {
-    list = list.filter(t => (t.category || 'General').toLowerCase() === currentCategoryFilter.toLowerCase());
+    list = list.filter(
+      t => (t.category || 'General').toLowerCase() === currentCategoryFilter.toLowerCase()
+    );
   }
 
   // Search Query
@@ -366,7 +373,8 @@ function renderTaskList() {
     if (searchQuery || currentStatusFilter !== 'all' || currentCategoryFilter !== 'all') {
       emptyStateDesc.textContent = 'No tasks match your active filters or search terms.';
     } else {
-      emptyStateDesc.textContent = 'Your task list is empty. Add a task above or load sample academic tasks.';
+      emptyStateDesc.textContent =
+        'Your task list is empty. Add a task above or load sample academic tasks.';
     }
     return;
   }
@@ -398,7 +406,10 @@ function createTaskCardElement(task) {
   checkbox.type = 'checkbox';
   checkbox.className = 'custom-checkbox';
   checkbox.checked = Boolean(task.completed);
-  checkbox.setAttribute('aria-label', `Mark "${task.title}" as ${task.completed ? 'incomplete' : 'complete'}`);
+  checkbox.setAttribute(
+    'aria-label',
+    `Mark "${task.title}" as ${task.completed ? 'incomplete' : 'complete'}`
+  );
   checkboxWrapper.appendChild(checkbox);
 
   // Body
@@ -713,29 +724,33 @@ function renderEisenhowerMatrix() {
   let q3Count = 0;
   let q4Count = 0;
 
-  tasks.filter(t => !t.completed).forEach(task => {
-    const isUrgent = task.priority === 'urgent' || (task.dueAt && new Date(task.dueAt).getTime() < now + 86400_000);
-    const isHigh = task.priority === 'urgent' || task.priority === 'high';
-    const isShort = (task.estimatedMinutes || 25) <= 15;
+  tasks
+    .filter(t => !t.completed)
+    .forEach(task => {
+      const isUrgent =
+        task.priority === 'urgent' ||
+        (task.dueAt && new Date(task.dueAt).getTime() < now + 86400_000);
+      const isHigh = task.priority === 'urgent' || task.priority === 'high';
+      const isShort = (task.estimatedMinutes || 25) <= 15;
 
-    let targetList;
-    if (isUrgent && isHigh) {
-      targetList = q1List;
-      q1Count++;
-    } else if (isHigh && !isUrgent) {
-      targetList = q2List;
-      q2Count++;
-    } else if (isShort) {
-      targetList = q3List;
-      q3Count++;
-    } else {
-      targetList = q4List;
-      q4Count++;
-    }
+      let targetList;
+      if (isUrgent && isHigh) {
+        targetList = q1List;
+        q1Count++;
+      } else if (isHigh && !isUrgent) {
+        targetList = q2List;
+        q2Count++;
+      } else if (isShort) {
+        targetList = q3List;
+        q3Count++;
+      } else {
+        targetList = q4List;
+        q4Count++;
+      }
 
-    const item = document.createElement('div');
-    item.className = 'quadrant-mini-item';
-    item.innerHTML = `
+      const item = document.createElement('div');
+      item.className = 'quadrant-mini-item';
+      item.innerHTML = `
       <div style="display: flex; align-items: center; gap: 0.5rem; overflow: hidden;">
         <span>${task.priority === 'urgent' ? '🔥' : task.priority === 'high' ? '🎯' : '•'}</span>
         <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;">${escapeHtml(task.title)}</span>
@@ -743,14 +758,14 @@ function renderEisenhowerMatrix() {
       <button type="button" class="btn btn-sm btn-secondary btn-q-focus" title="Focus now">▶</button>
     `;
 
-    item.querySelector('.btn-q-focus').onclick = () => {
-      switchView('focus');
-      focusStudio.setTask(task);
-      focusStudio.start();
-    };
+      item.querySelector('.btn-q-focus').onclick = () => {
+        switchView('focus');
+        focusStudio.setTask(task);
+        focusStudio.start();
+      };
 
-    targetList.appendChild(item);
-  });
+      targetList.appendChild(item);
+    });
 
   const q1CountEl = document.getElementById('q1-count');
   const q2CountEl = document.getElementById('q2-count');
@@ -898,7 +913,10 @@ function renderTokenPreviews(tokens) {
   }
   tokenPreviewStrip.hidden = false;
   tokenPreviewStrip.innerHTML = tokens
-    .map(tok => `<span class="token-pill token-${tok.type}-${tok.value || ''} token-${tok.type}">${tok.text}</span>`)
+    .map(
+      tok =>
+        `<span class="token-pill token-${tok.type}-${tok.value || ''} token-${tok.type}">${tok.text}</span>`
+    )
     .join('');
 }
 
@@ -1127,7 +1145,9 @@ function autoPickTopThreeTasks() {
 
   alert(
     `✨ Eat the Frog: Top 3 High-Impact Tasks Selected!\n\n` +
-      top3.map((t, i) => `${i + 1}. [${(t.priority || 'medium').toUpperCase()}] ${t.title}`).join('\n')
+      top3
+        .map((t, i) => `${i + 1}. [${(t.priority || 'medium').toUpperCase()}] ${t.title}`)
+        .join('\n')
   );
 
   // Switch to Focus Studio with the #1 top task
