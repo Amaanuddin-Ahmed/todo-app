@@ -1,70 +1,523 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Todo App</title>
+    <title>TaskFlow Studio — Three-Tier Productivity Engine</title>
+    <meta
+      name="description"
+      content="Production-grade, full-stack Three-Tier task and productivity platform (Browser -> Express API -> PostgreSQL)."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
+    <!-- Top Header -->
     <header class="app-header">
-      <h1>Todo App</h1>
+      <div class="brand-cluster">
+        <div class="brand-logo" aria-hidden="true">⚡</div>
+        <div class="brand-text">
+          <h1>
+            TaskFlow Studio
+            <span class="badge-tag">3-Tier PostgreSQL</span>
+          </h1>
+        </div>
+      </div>
+
+      <!-- Navigation View Switcher -->
+      <nav class="nav-views" aria-label="Workspace views">
+        <button type="button" class="nav-tab-btn active" data-view="list" id="tab-btn-list">
+          <span>📋</span> List
+        </button>
+        <button type="button" class="nav-tab-btn" data-view="eisenhower" id="tab-btn-eisenhower">
+          <span>🧭</span> Eisenhower Matrix
+        </button>
+        <button type="button" class="nav-tab-btn" data-view="focus" id="tab-btn-focus">
+          <span>⏱</span> Focus Studio
+        </button>
+      </nav>
+
+      <!-- Header Actions & Telemetry -->
+      <div class="header-actions">
+        <div id="header-db-pill" class="status-pill" title="Live PostgreSQL database sync status">
+          <span class="dot-green">●</span>
+          <span>PostgreSQL Connected</span>
+        </div>
+
+        <button
+          type="button"
+          id="notification-status-pill"
+          class="status-pill"
+          title="Click to request notification permission"
+        >
+          <span class="dot-amber">●</span>
+          <span>🔔 Alerts Ready</span>
+        </button>
+
+        <button
+          type="button"
+          id="test-demo-5s-btn"
+          class="btn btn-sm btn-accent"
+          title="1-Click 5-second live reminder test for professor demo"
+        >
+          <span>🔔 Demo (5s)</span>
+        </button>
+
+        <button
+          type="button"
+          id="shortcuts-btn"
+          class="btn btn-icon"
+          title="Keyboard shortcuts (?)"
+          aria-label="Keyboard shortcuts"
+        >
+          ❓
+        </button>
+
+        <button
+          type="button"
+          id="theme-toggle-btn"
+          class="btn btn-icon"
+          title="Toggle Light/Dark Theme (T)"
+          aria-label="Toggle theme"
+        >
+          🌙
+        </button>
+      </div>
     </header>
 
+    <!-- Floating Reminder Banners Container -->
+    <div id="reminder-banner-container" class="reminder-banner-container" aria-live="assertive"></div>
+
+    <!-- Main Workspace -->
     <main class="app-main">
-      <!-- Add Task Form -->
-      <form id="task-form" class="task-form" novalidate>
-        <div class="form-group">
-          <label for="task-title">Add a task</label>
-          <div class="input-wrapper">
-            <input
-              type="text"
-              id="task-title"
-              name="title"
-              maxlength="200"
-              placeholder="What needs to be done?"
-              required
-              autocomplete="off"
-            />
-            <button type="submit" id="submit-btn" class="btn btn-primary" disabled>
-              <span class="btn-text">Add</span>
-              <span class="btn-loading" hidden>Adding…</span>
+      <!-- KPI Analytics Summary Strip -->
+      <section class="kpi-strip" aria-label="Task metrics summary">
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Completion Rate</span>
+            <span>🎯</span>
+          </div>
+          <div class="kpi-value" id="kpi-completion-rate">0%</div>
+          <div class="kpi-subtext">
+            <span id="kpi-completed-ratio">0 of 0 tasks done</span>
+          </div>
+          <div class="mini-progress-bar">
+            <div class="mini-progress-fill" id="kpi-progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Due Today / Overdue</span>
+            <span>⏰</span>
+          </div>
+          <div class="kpi-value" id="kpi-due-count">0</div>
+          <div class="kpi-subtext">
+            <span id="kpi-overdue-text">No overdue tasks</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Cognitive Load</span>
+            <span class="load-indicator load-optimal" id="cognitive-load-badge">Optimal</span>
+          </div>
+          <div class="kpi-value" id="kpi-cognitive-time">0m</div>
+          <div class="kpi-subtext">
+            <span>Budget: 180m</span>
+            <button type="button" class="btn btn-sm btn-secondary" id="auto-pick-frog-btn" title="Pick top 3 high-impact tasks">
+              ✨ Pick Top 3
             </button>
           </div>
-          <p id="title-error" class="error-message" hidden></p>
         </div>
-      </form>
 
-      <!-- Toolbar -->
-      <div class="toolbar">
-        <button type="button" id="refresh-btn" class="btn btn-secondary">Refresh</button>
-      </div>
-
-      <!-- Task List -->
-      <section id="task-list" class="task-list" aria-live="polite" aria-label="Tasks">
-        <!-- Tasks rendered here -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Focus Time Logged</span>
+            <span>⏱</span>
+          </div>
+          <div class="kpi-value" id="kpi-focus-logged">0m</div>
+          <div class="kpi-subtext">
+            <span>Synced to PostgreSQL</span>
+          </div>
+        </div>
       </section>
 
-      <!-- Empty State -->
-      <p id="empty-state" class="empty-state" hidden>No tasks yet. Add one above!</p>
+      <!-- VIEW 1: Smart List View -->
+      <div id="view-list" class="view-panel">
+        <!-- Smart Natural-Language Composer -->
+        <section class="composer-card" aria-label="Add task composer">
+          <form id="task-form" novalidate>
+            <div class="quick-add-row">
+              <span class="input-prompt-icon" aria-hidden="true">✦</span>
+              <input
+                type="text"
+                id="task-title"
+                name="title"
+                class="quick-add-input"
+                maxlength="500"
+                placeholder="What needs to be done? (e.g. Finish demo !urgent #academic ~30m in 10m)"
+                required
+                autocomplete="off"
+              />
+              <div class="composer-top-actions">
+                <button
+                  type="button"
+                  id="smart-parse-chip"
+                  class="toggle-chip active"
+                  title="Toggle Natural Language Token Parsing"
+                >
+                  ⚡ Smart Parse: ON
+                </button>
+                <button
+                  type="button"
+                  id="composer-expand-toggle"
+                  class="btn btn-secondary btn-sm"
+                  title="Toggle detailed fields drawer"
+                >
+                  Options ▾
+                </button>
+                <button type="submit" id="submit-btn" class="btn btn-primary" disabled>
+                  <span>Add Task</span>
+                </button>
+              </div>
+            </div>
 
-      <!-- Error State -->
-      <div id="error-state" class="error-state" hidden>
-        <p id="error-message"></p>
-        <button type="button" id="retry-btn" class="btn btn-primary">Retry</button>
+            <!-- Live Token Preview Strip -->
+            <div id="token-preview-strip" class="token-preview-strip" hidden></div>
+
+            <!-- Expandable Advanced Composer Drawer -->
+            <div id="composer-drawer" class="composer-drawer" hidden>
+              <div class="composer-grid-row">
+                <div class="composer-group">
+                  <label for="composer-priority">Priority</label>
+                  <select id="composer-priority" class="composer-select">
+                    <option value="medium">Medium</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="high">High</option>
+                    <option value="low">Low</option>
+                  </select>
+                </div>
+
+                <div class="composer-group">
+                  <label for="composer-category">Category</label>
+                  <input
+                    type="text"
+                    id="composer-category"
+                    class="composer-input"
+                    placeholder="General, Academic, Coding, etc."
+                    value="General"
+                  />
+                </div>
+
+                <div class="composer-group">
+                  <label for="composer-effort">Estimated Effort</label>
+                  <select id="composer-effort" class="composer-select">
+                    <option value="15">15 mins (Quick Win)</option>
+                    <option value="25" selected>25 mins (Pomodoro)</option>
+                    <option value="45">45 mins</option>
+                    <option value="60">60 mins (1 hour)</option>
+                    <option value="90">90 mins</option>
+                  </select>
+                </div>
+
+                <div class="composer-group">
+                  <label for="composer-due">Due Date & Reminder</label>
+                  <input type="datetime-local" id="composer-due" class="composer-input" />
+                  <div class="quick-presets-row">
+                    <button type="button" class="preset-chip" data-preset="in5m">In 5m (Demo)</button>
+                    <button type="button" class="preset-chip" data-preset="in30m">In 30m</button>
+                    <button type="button" class="preset-chip" data-preset="tonight">Tonight 8pm</button>
+                    <button type="button" class="preset-chip" data-preset="tomorrow">Tomorrow 9am</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="composer-group">
+                <label for="composer-notes">Notes / Description (Optional)</label>
+                <textarea
+                  id="composer-notes"
+                  class="composer-textarea"
+                  placeholder="Additional context, links, or instructions..."
+                ></textarea>
+              </div>
+            </div>
+
+            <p id="title-error" class="error-message" hidden></p>
+          </form>
+        </section>
+
+        <!-- Filter, Search & Sort Toolbar -->
+        <section class="toolbar-card" aria-label="Filter and search tasks">
+          <div class="search-and-tabs-row">
+            <div class="search-box">
+              <span>🔍</span>
+              <input
+                type="text"
+                id="search-input"
+                class="search-input"
+                placeholder="Search tasks, descriptions, subtasks..."
+              />
+              <kbd class="kbd-badge">/</kbd>
+            </div>
+
+            <div class="filter-tabs" role="tablist">
+              <button type="button" class="filter-tab active" data-status="all">
+                All <span class="filter-badge" id="badge-count-all">0</span>
+              </button>
+              <button type="button" class="filter-tab" data-status="active">
+                Active <span class="filter-badge" id="badge-count-active">0</span>
+              </button>
+              <button type="button" class="filter-tab" data-status="today">
+                Today & Soon <span class="filter-badge" id="badge-count-today">0</span>
+              </button>
+              <button type="button" class="filter-tab" data-status="overdue" id="tab-filter-overdue">
+                Overdue <span class="filter-badge" id="badge-count-overdue">0</span>
+              </button>
+              <button type="button" class="filter-tab" data-status="completed">
+                Completed <span class="filter-badge" id="badge-count-completed">0</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="category-and-sort-row">
+            <div class="category-pills" id="category-pills">
+              <button type="button" class="category-pill active" data-cat="all">All Categories</button>
+            </div>
+
+            <div class="bulk-actions-group">
+              <select id="sort-select" class="composer-select" aria-label="Sort tasks">
+                <option value="smartPriority">Sort: Smart Priority</option>
+                <option value="dueDate">Sort: Due Date (Earliest)</option>
+                <option value="createdDate">Sort: Created Date (Newest)</option>
+                <option value="effort">Sort: Shortest Effort (Quick Wins)</option>
+                <option value="timeSpent">Sort: Time Spent</option>
+              </select>
+
+              <button type="button" id="clear-completed-btn" class="btn btn-secondary btn-sm" title="Clear all completed tasks">
+                Clear Completed
+              </button>
+
+              <button type="button" id="export-btn" class="btn btn-secondary btn-sm" title="Export tasks report">
+                Export ▾
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Shimmer Skeleton Loading Indicator (Initial Load Only) -->
+        <div id="skeleton-loader" class="skeleton-container" hidden>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
+
+        <!-- Task List -->
+        <ul id="task-list" class="task-list" aria-live="polite" aria-label="Task items">
+          <!-- Rendered dynamically -->
+        </ul>
+
+        <!-- Empty State Card -->
+        <div id="empty-state" class="empty-state-card" hidden>
+          <div class="empty-state-icon">📋</div>
+          <h3>No tasks found</h3>
+          <p id="empty-state-desc">Your task list is empty. Add a task above or load sample academic tasks.</p>
+          <button type="button" id="seed-demo-tasks-btn" class="btn btn-primary">
+            ✨ Seed Sample Tasks
+          </button>
+        </div>
+
+        <!-- Error State Card -->
+        <div id="error-state" class="empty-state-card" hidden>
+          <div class="empty-state-icon">⚠️</div>
+          <h3 id="error-message">Unable to load tasks from PostgreSQL</h3>
+          <button type="button" id="retry-btn" class="btn btn-primary">
+            Retry Connection
+          </button>
+        </div>
       </div>
 
-      <!-- Loading State -->
-      <div id="loading-state" class="loading-state" hidden>
-        <span class="spinner" aria-hidden="true"></span>
-        <span class="sr-only">Loading tasks…</span>
+      <!-- VIEW 2: Eisenhower Priority Matrix -->
+      <div id="view-eisenhower" class="view-panel" hidden>
+        <div class="eisenhower-grid">
+          <div class="quadrant-card quadrant-q1">
+            <div class="quadrant-header">
+              <span class="quadrant-title">🔥 Q1: Do First (Eat the Frog)</span>
+              <span class="badge-tag" id="q1-count">0 tasks</span>
+            </div>
+            <p class="reminder-banner-meta">Urgent & High Priority · Due Today / Overdue</p>
+            <div class="quadrant-tasks-list" id="quadrant-q1-list"></div>
+          </div>
+
+          <div class="quadrant-card quadrant-q2">
+            <div class="quadrant-header">
+              <span class="quadrant-title">🎯 Q2: Schedule (Deep Work)</span>
+              <span class="badge-tag" id="q2-count">0 tasks</span>
+            </div>
+            <p class="reminder-banner-meta">Important & High Value · Upcoming Deadlines</p>
+            <div class="quadrant-tasks-list" id="quadrant-q2-list"></div>
+          </div>
+
+          <div class="quadrant-card quadrant-q3">
+            <div class="quadrant-header">
+              <span class="quadrant-title">⚡ Q3: Quick Wins (Momentum)</span>
+              <span class="badge-tag" id="q3-count">0 tasks</span>
+            </div>
+            <p class="reminder-banner-meta">Short Effort (<= 15 mins) · Fast Completion</p>
+            <div class="quadrant-tasks-list" id="quadrant-q3-list"></div>
+          </div>
+
+          <div class="quadrant-card quadrant-q4">
+            <div class="quadrant-header">
+              <span class="quadrant-title">📁 Q4: Backlog (Later)</span>
+              <span class="badge-tag" id="q4-count">0 tasks</span>
+            </div>
+            <p class="reminder-banner-meta">Low Priority · Ideas & Someday</p>
+            <div class="quadrant-tasks-list" id="quadrant-q4-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 3: Pomodoro Focus Studio -->
+      <div id="view-focus" class="view-panel" hidden>
+        <div class="focus-studio-card" id="focus-studio-widget">
+          <div class="focus-modes-row">
+            <button type="button" class="focus-mode-btn active" data-mins="25">Pomodoro (25m)</button>
+            <button type="button" class="focus-mode-btn" data-mins="15">Sprint (15m)</button>
+            <button type="button" class="focus-mode-btn" data-mins="50">Deep Work (50m)</button>
+          </div>
+
+          <div class="focus-task-info">
+            <h2 id="focus-task-title">Select a task to focus on</h2>
+            <p id="focus-task-meta" class="reminder-banner-meta">Click ▶ Focus on any task card</p>
+          </div>
+
+          <div class="timer-circle-wrapper">
+            <svg class="timer-svg" viewBox="0 0 120 120">
+              <circle class="timer-bg-ring" cx="60" cy="60" r="54"></circle>
+              <circle class="timer-progress-ring" id="focus-progress-ring" cx="60" cy="60" r="54"></circle>
+            </svg>
+            <div class="timer-display">
+              <span class="timer-time" id="focus-timer-text">25:00</span>
+              <span class="badge-tag">PostgreSQL Sync</span>
+            </div>
+          </div>
+
+          <div class="focus-controls-row">
+            <button type="button" id="focus-play-btn" class="btn btn-primary">
+              ▶ Start Focus
+            </button>
+            <button type="button" id="focus-pause-btn" class="btn btn-secondary" hidden>
+              ⏸ Pause
+            </button>
+            <button type="button" id="focus-reset-btn" class="btn btn-secondary">
+              ↺ Reset
+            </button>
+            <button type="button" id="focus-complete-btn" class="btn btn-accent">
+              ✓ Mark Task Done
+            </button>
+          </div>
+        </div>
       </div>
     </main>
 
-    <footer class="app-footer">
-      <p>Three-tier: Browser → Express API → PostgreSQL</p>
+    <!-- Undo Toast Notification -->
+    <div id="undo-toast" class="undo-toast" hidden role="status" aria-live="polite">
+      <span id="undo-toast-text">Task deleted</span>
+      <button type="button" id="undo-action-btn" class="btn btn-sm btn-primary">
+        Undo
+      </button>
+      <button type="button" id="undo-dismiss-btn" class="btn btn-icon" aria-label="Dismiss">
+        ✕
+      </button>
+    </div>
+
+    <!-- Keyboard Shortcuts Modal -->
+    <dialog id="shortcuts-modal" class="composer-card" style="max-width: 440px; margin: auto;">
+      <div class="drawer-header" style="margin-bottom: 1rem;">
+        <h3>Keyboard Shortcuts</h3>
+        <button type="button" id="shortcuts-close-btn" class="btn btn-icon">✕</button>
+      </div>
+      <table class="log-table">
+        <tbody>
+          <tr><td><kbd class="kbd-badge">N</kbd> or <kbd class="kbd-badge">C</kbd></td><td>Focus Add Task input</td></tr>
+          <tr><td><kbd class="kbd-badge">/</kbd> or <kbd class="kbd-badge">⌘K</kbd></td><td>Focus Search & Filters</td></tr>
+          <tr><td><kbd class="kbd-badge">1</kbd>, <kbd class="kbd-badge">2</kbd>, <kbd class="kbd-badge">3</kbd></td><td>Switch Views (List, Matrix, Focus)</td></tr>
+          <tr><td><kbd class="kbd-badge">I</kbd></td><td>Toggle Architecture & Telemetry Inspector</td></tr>
+          <tr><td><kbd class="kbd-badge">T</kbd></td><td>Toggle Dark / Light Theme</td></tr>
+          <tr><td><kbd class="kbd-badge">Esc</kbd></td><td>Close drawers & modals</td></tr>
+        </tbody>
+      </table>
+    </dialog>
+
+    <!-- Interactive Live Three-Tier Architecture Inspector Dock -->
+    <footer class="telemetry-dock" aria-label="Three-tier architecture inspector">
+      <div class="telemetry-dock-bar" id="telemetry-dock-bar">
+        <div class="pipeline-diagram">
+          <span class="tier-node">🌐 Browser Client</span>
+          <span class="tier-link">──HTTP/JSON──▶</span>
+          <span class="packet-indicator" id="telemetry-packet"></span>
+          <span class="tier-node">⚡ Express API</span>
+          <span class="tier-link">──SQL/Pool──▶</span>
+          <span class="tier-node">🐘 PostgreSQL</span>
+        </div>
+
+        <div class="dock-badges">
+          <span>Latency: <strong id="telemetry-dock-latency">18ms</strong></span>
+          <span>DB: <strong id="telemetry-dock-db" class="status-badge status-ok">Connected</strong></span>
+          <button type="button" id="ping-stack-btn" class="btn btn-sm btn-secondary" title="Ping stack & measure round-trip latency">
+            ⚡ Ping Stack
+          </button>
+          <span>[ <span id="telemetry-toggle-icon">▲</span> Live Console ]</span>
+        </div>
+      </div>
+
+      <!-- Slide-Up Engineering Drawer -->
+      <div id="telemetry-drawer" class="telemetry-drawer" hidden>
+        <div class="drawer-header">
+          <h3>Live Three-Tier Telemetry & Parameterized SQL Inspector</h3>
+          <div id="telemetry-health-stats" class="dock-badges"></div>
+          <button type="button" id="telemetry-drawer-close" class="btn btn-icon" aria-label="Close drawer">✕</button>
+        </div>
+
+        <div class="drawer-grid">
+          <!-- Request / Response Network Log -->
+          <div class="drawer-panel">
+            <h4>Live REST API Network Log (Client ⇄ Express)</h4>
+            <div class="log-table-container">
+              <table class="log-table">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Method</th>
+                    <th>Endpoint</th>
+                    <th>Status</th>
+                    <th>Latency</th>
+                  </tr>
+                </thead>
+                <tbody id="telemetry-log-tbody">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Parameterized SQL Query Inspector -->
+          <div class="drawer-panel">
+            <h4>Latest Parameterized PostgreSQL Query (Express ⇄ Database)</h4>
+            <pre class="sql-code-block" id="telemetry-sql-code">SELECT NOW() AS server_time, current_database() AS db_name FROM tasks;</pre>
+            <p class="reminder-banner-meta">All operations parameterized ($1, $2) to guarantee SQL injection safety.</p>
+          </div>
+        </div>
+      </div>
     </footer>
 
+    <!-- Scripts -->
     <script type="module" src="/js/app.js"></script>
   </body>
 </html>
