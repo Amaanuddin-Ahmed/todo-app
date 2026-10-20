@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "src/app.js": {
+      "maxDuration": 30
+    }
+  },
   "headers": [
     {
       "source": "/(.*)",
