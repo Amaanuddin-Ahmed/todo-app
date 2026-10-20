@@ -2,14 +2,15 @@
 // Exports createApp({ tasksRepository }) for testability.
 // src/app.js wires the real pg repository and default-exports the app.
 
-import express from "express";
-import helmet from "helmet";
-import { createHealthRouter } from "./routes/health.js";
-import { createTasksRouter } from "./routes/tasks.js";
-import { createTasksService } from "./services/tasks-service.js";
-import { requestLogger } from "./middleware/logging.js";
-import { errorHandler } from "./middleware/error-handler.js";
-import { requireJson } from "./middleware/validation.js";
+import express from 'express';
+import helmet from 'helmet';
+import { createHealthRouter } from './routes/health.js';
+import { createTasksRouter } from './routes/tasks.js';
+import { createTasksService } from './services/tasks-service.js';
+import { requestLogger } from './middleware/logging.js';
+import { errorHandler } from './middleware/error-handler.js';
+import { requireJson } from './middleware/validation.js';
+import { telemetryMiddleware } from './middleware/telemetry.js';
 
 /**
  * Optionally attach database pool for Vercel Fluid Compute.
@@ -18,8 +19,8 @@ import { requireJson } from "./middleware/validation.js";
  */
 async function maybeAttachDatabasePool(app, pool) {
   try {
-    const mod = await import("@vercel/functions");
-    if (typeof mod.attachDatabasePool === "function") {
+    const mod = await import('@vercel/functions');
+    if (typeof mod.attachDatabasePool === 'function') {
       mod.attachDatabasePool(app, pool);
     }
   } catch {
@@ -53,6 +54,9 @@ export function createApp({ tasksRepository, pool } = {}) {
 
   // Request logging
   app.use(requestLogger);
+
+  // Telemetry middleware (measures response time, adds headers)
+  app.use(telemetryMiddleware);
 
   // Require JSON for mutating methods
   app.use(requireJson);

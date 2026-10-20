@@ -2,9 +2,9 @@
 // Default-exported Express app for zero-config Vercel detection.
 // Wires real pg repository with connection pooling.
 
-import pg from "pg";
-import { createApp } from "./create-app.js";
-import { createTasksRepository } from "./repositories/tasks-repository.js";
+import pg from 'pg';
+import { createApp } from './create-app.js';
+import { createTasksRepository } from './repositories/tasks-repository.js';
 
 const { Pool } = pg;
 
@@ -14,20 +14,18 @@ function createPool() {
 
   if (!connectionString) {
     // Don't throw here - let the health endpoint return 503
-    console.warn("⚠️  DATABASE_URL not set - database operations will fail");
+    console.warn('⚠️  DATABASE_URL not set - database operations will fail');
     return null;
   }
 
-  const isProduction = process.env.NODE_ENV === "production";
+  const isProduction = process.env.NODE_ENV === 'production';
 
   return new Pool({
     connectionString,
     max: isProduction ? 10 : 3,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 5_000,
-    ssl: connectionString.includes("sslmode=require")
-      ? { rejectUnauthorized: false }
-      : false,
+    ssl: connectionString.includes('sslmode=require') ? { rejectUnauthorized: false } : false,
   });
 }
 
@@ -44,9 +42,9 @@ const app = createApp({
 export default app;
 
 // Graceful shutdown for local development
-if (process.env.NODE_ENV !== "production") {
-  process.on("SIGINT", async () => {
-    console.log("\n🛑  Shutting down...");
+if (process.env.NODE_ENV !== 'production') {
+  process.on('SIGINT', async () => {
+    console.log('\n🛑  Shutting down...');
     if (pool) {
       await pool.end();
     }

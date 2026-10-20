@@ -1,5 +1,5 @@
 // Tasks Routes
-// GET /api/tasks, POST /api/tasks, PATCH /api/tasks/:id, DELETE /api/tasks/:id
+// GET /api/todos, POST /api/todos, PUT/PATCH /api/todos/:id, DELETE /api/todos/:id
 
 import { Router } from 'express';
 import { ValidationError, NotFoundError, InvalidIdError } from '../services/tasks-service.js';
@@ -12,18 +12,18 @@ import { ValidationError, NotFoundError, InvalidIdError } from '../services/task
 export function createTasksRouter(tasksService) {
   const router = Router();
 
-  // GET /api/tasks
-  router.get('/tasks', async (req, res, next) => {
+  // GET /api/todos
+  router.get('/todos', async (req, res, next) => {
     try {
-      const tasks = await tasksService.getAllTasks();
+      const tasks = await tasksService.getAllTasks(req.query);
       res.json({ tasks });
     } catch (err) {
       next(err);
     }
   });
 
-  // POST /api/tasks
-  router.post('/tasks', async (req, res, next) => {
+  // POST /api/todos
+  router.post('/todos', async (req, res, next) => {
     try {
       const task = await tasksService.createTask(req.body);
       res.status(201).json({ task });
@@ -37,47 +37,86 @@ export function createTasksRouter(tasksService) {
     }
   });
 
-  // PATCH /api/tasks/:id
-  router.patch('/tasks/:id', async (req, res, next) => {
+  // GET /api/todos/:id
+  router.get('/todos/:id', async (req, res, next) => {
     try {
-      const task = await tasksService.updateTask(req.params.id, req.body);
+      const task = await tasksService.getTaskById(req.params.id);
       res.json({ task });
     } catch (err) {
-      if (err instanceof ValidationError) {
-        return res.status(400).json({
-          error: { code: err.code, message: err.message, field: err.field },
-        });
-      }
       if (err instanceof InvalidIdError) {
-        return res.status(400).json({
-          error: { code: err.code, message: err.message },
-        });
+        return res.status(400).json({ error: { code: err.code, message: err.message } });
       }
       if (err instanceof NotFoundError) {
-        return res.status(404).json({
-          error: { code: err.code, message: err.message },
-        });
+        return res.status(404).json({ error: { code: err.code, message: err.message } });
       }
       next(err);
     }
   });
 
-  // DELETE /api/tasks/:id
-  router.delete('/tasks/:id', async (req, res, next) => {
+  // PUT /api/todos/:id (full replacement)
+  router.put('/todos/:id', async (req, res, next) => {
     try {
-      await tasksService.deleteTask(req.params.id);
-      res.status(204).send();
+      const task = await tasksService.replaceTask(req.params.id, req.body);
+      res.json({ task });
     } catch (err) {
+      if (err instanceof ValidationError) {
+        return res
+          .status(400)
+          .json({ error: { code: err.code, message: err.message, field: err.field } });
+      }
       if (err instanceof InvalidIdError) {
-        return res.status(400).json({
-          error: { code: err.code, message: err.message },
-        });
+        return res.status(400).json({ error: { code: err.code, message: err.message } });
       }
       if (err instanceof NotFoundError) {
-        return res.status(404).json({
-          error: { code: err.code, message: err.message },
-        });
+        return res.status(404).json({ error: { code: err.code, message: err.message } });
       }
+      next(err);
+    }
+  });
+
+  // PATCH /api/todos/:id (partial update)
+  router.patch('/todos/:id', async (req, res, next) => {
+    try {
+      const task = await tasksService.updateTask(req.params.id, req.body);
+      res.json({ task });
+    } catch (err) {
+      if (err instanceof ValidationError) {
+        return res
+          .status(400)
+          .json({ error: { code: err.code, message: err.message, field: err.field } });
+      }
+      if (err instanceof InvalidIdError) {
+        return res.status(400).json({ error: { code: err.code, message: err.message } });
+      }
+      if (err instanceof NotFoundError) {
+        return res.status(404).json({ error: { code: err.code, message: err.message } });
+      }
+      next(err);
+    }
+  });
+
+  // DELETE /api/todos/:id
+  router.delete('/todos/:id', async (req, res, next) => {
+    try {
+      const deletedTask = await tasksService.deleteTask(req.params.id);
+      res.json({ deleted: true, id: deletedTask.id, item: deletedTask });
+    } catch (err) {
+      if (err instanceof InvalidIdError) {
+        return res.status(400).json({ error: { code: err.code, message: err.message } });
+      }
+      if (err instanceof NotFoundError) {
+        return res.status(404).json({ error: { code: err.code, message: err.message } });
+      }
+      next(err);
+    }
+  });
+
+  // POST /api/todos/clear-completed
+  router.post('/todos/clear-completed', async (req, res, next) => {
+    try {
+      const result = await tasksService.clearCompleted();
+      res.json(result);
+    } catch (err) {
       next(err);
     }
   });

@@ -1,5 +1,5 @@
 // Health Check Route
-// GET /api/health -> 200 { status: "ok" } or 503
+// GET /api/health -> detailed telemetry
 
 import { Router } from 'express';
 
@@ -13,12 +13,41 @@ export function createHealthRouter(tasksService) {
 
   router.get('/health', async (req, res, next) => {
     try {
-      const healthy = await tasksService.checkHealth();
-      if (healthy) {
-        return res.status(200).json({ status: 'ok' });
+      const start = process.hrtime.bigint();
+      const health = await tasksService.checkHealth();
+      const dbLatencyMs = health.latencyMs;
+      const stats = await tasksService.getStats();
+
+      if (!health.healthy) {
+        return res.status(503).json({
+          status: 'degraded',
+          tiers: {
+            browser: 'Connected',
+            express: 'Online',
+            postgres: 'Disconnected',
+          },
+          dbLatencyMs: null,
+          totalTasks: 0,
+          timestamp: new Date().toISOString(),
+        });
       }
-      return res.status(503).json({
-        error: { code: 'DB_UNAVAILABLE', message: 'Database connection failed' },
+
+      res.set({
+        'X-Response-Time': `${(Number(process.hrtime.bigint() - start) / 1_000_000).toFixed(2)}ms`,
+        'X-DB-Tier': 'PostgreSQL',
+        'X-API-Tier': 'Express-Serverless',
+      });
+
+      return res.status(200).json({
+        status: 'healthy',
+        tiers: {
+          browser: 'Connected',
+          express: 'Online',
+          postgres: 'Connected',
+        },
+        dbLatencyMs,
+        totalTasks: stats.total_tasks,
+        timestamp: stats.server_time,
       });
     } catch (err) {
       next(err);
