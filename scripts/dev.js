@@ -2,8 +2,9 @@
 // Runs Express app on PORT (default 3000) with file watching via `node --watch`.
 // Loads .env.local via --env-file flag in package.json script.
 
-import { createApp } from '../src/create-app.js';
-import pg from 'pg';
+import { createApp } from "../src/create-app.js";
+import { createTasksRepository } from "../src/repositories/tasks-repository.js";
+import pg from "pg";
 
 const { Pool } = pg;
 
@@ -14,7 +15,7 @@ function createLocalPool() {
   const connectionString = process.env.DATABASE_URL;
 
   if (!connectionString) {
-    console.warn('⚠️  No DATABASE_URL in .env.local - API will return 503');
+    console.warn("⚠️  No DATABASE_URL in .env.local - API will return 503");
     return null;
   }
 
@@ -23,23 +24,17 @@ function createLocalPool() {
     max: 3,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 5_000,
-    ssl: connectionString.includes('sslmode=require') ? { rejectUnauthorized: false } : false,
+    ssl: connectionString.includes("sslmode=require")
+      ? { rejectUnauthorized: false }
+      : false,
   });
 }
 
 const pool = createLocalPool();
+const tasksRepository = pool ? createTasksRepository(pool) : null;
 
-// Create repository
-let tasksRepository = null;
 if (pool) {
-  import('../src/repositories/tasks-repository.js')
-    .then(({ createTasksRepository }) => {
-      tasksRepository = createTasksRepository(pool);
-      console.log('✅  Database pool connected');
-    })
-    .catch(err => {
-      console.error('❌  Failed to create repository:', err.message);
-    });
+  console.log("✅  Database pool connected");
 }
 
 // Create and start app

@@ -2,8 +2,9 @@
 // Default-exported Express app for zero-config Vercel detection.
 // Wires real pg repository with connection pooling.
 
-import pg from 'pg';
-import { createApp } from './create-app.js';
+import pg from "pg";
+import { createApp } from "./create-app.js";
+import { createTasksRepository } from "./repositories/tasks-repository.js";
 
 const { Pool } = pg;
 
@@ -13,44 +14,39 @@ function createPool() {
 
   if (!connectionString) {
     // Don't throw here - let the health endpoint return 503
-    console.warn('⚠️  DATABASE_URL not set - database operations will fail');
+    console.warn("⚠️  DATABASE_URL not set - database operations will fail");
     return null;
   }
 
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === "production";
 
   return new Pool({
     connectionString,
-    max: isProduction ? 10 : 3, // Higher in production, lower locally
+    max: isProduction ? 10 : 3,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 5_000,
-    ssl: connectionString.includes('sslmode=require') ? { rejectUnauthorized: false } : false,
+    ssl: connectionString.includes("sslmode=require")
+      ? { rejectUnauthorized: false }
+      : false,
   });
 }
 
+// Create pool and repository at module level (runs on cold start)
 const pool = createPool();
-
-// Create repository if pool exists
-let tasksRepository = null;
-if (pool) {
-  // Import repository factory dynamically to avoid top-level await issues
-  import('./repositories/tasks-repository.js').then(({ createTasksRepository }) => {
-    tasksRepository = createTasksRepository(pool);
-  });
-}
+const tasksRepository = pool ? createTasksRepository(pool) : null;
 
 // Create and export the Express app
 const app = createApp({
   tasksRepository,
-  pool, // Pass pool for @vercel/functions attachDatabasePool
+  pool,
 });
 
 export default app;
 
 // Graceful shutdown for local development
-if (process.env.NODE_ENV !== 'production') {
-  process.on('SIGINT', async () => {
-    console.log('\n🛑  Shutting down...');
+if (process.env.NODE_ENV !== "production") {
+  process.on("SIGINT", async () => {
+    console.log("\n🛑  Shutting down...");
     if (pool) {
       await pool.end();
     }
