@@ -2,11 +2,16 @@
 // Runs Express app on PORT (default 3000) with file watching via `node --watch`.
 // Loads .env.local via --env-file flag in package.json script.
 
+import express from 'express';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import pg from 'pg';
 import { createApp } from '../src/create-app.js';
 import { createTasksRepository } from '../src/repositories/tasks-repository.js';
-import pg from 'pg';
 
 const { Pool } = pg;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const publicDir = path.resolve(__dirname, '../public');
 
 const PORT = process.env.PORT || 3000;
 
@@ -40,6 +45,8 @@ const app = createApp({
   tasksRepository,
   pool,
 });
+
+app.use(express.static(publicDir));
 
 app.listen(PORT, () => {
   console.log(`🚀  Dev server running at http://localhost:${PORT}`);
